@@ -1,0 +1,29 @@
+# THIS FILE IS MANAGED VIA TERRAFORM.
+# Any modifications to this file will be overwritten by the repo vending machine pipeline.
+# See https://github.verafin.com/Verafin/cicd/blob/main/standard-eyes/standard-eyes-module/ if you need
+# to make changes to this file.
+
+#  Local .terraform directories
+**/.terraform/*
+.terraform/
+.terraform.lock.hcl
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# Intellij
+.idea/
+out/
+
+# Gradle
+.gradle/
+build/
+
+# General folders and files
+.settings
+.project
+.classpath
+
+# terragrunt
+**/backend.tf
