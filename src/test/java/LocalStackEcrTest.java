@@ -44,7 +44,7 @@ public class LocalStackEcrTest
         boolean useLegacyMode = false;
         container = new LocalStackContainer(DockerImageName.parse(LOCALSTACK_CONTAINER), useLegacyMode)
                 .withServices(S3, STS, EC2, ECR)
-                .withEnv(LOCALSTACK_API_KEY_ENV_VAR, /*INSERT API KEY HERE*/ "PLACE_HOLDER")
+                .withEnv(LOCALSTACK_API_KEY_ENV_VAR, /*INSERT API KEY HERE*/ "PLACEHOLDER")
                 .withEnv("DEBUG", "1")
                 .withEnv(HTTPS_PROXY_UPPER_KEY, System.getenv(HTTPS_PROXY_UPPER_KEY))
                 .withEnv(HTTP_PROXY_UPPER_KEY, System.getenv(HTTP_PROXY_UPPER_KEY))
@@ -92,14 +92,21 @@ public class LocalStackEcrTest
             GetAuthorizationTokenResponse token = ecrClient.getAuthorizationToken();
             for (AuthorizationData authorizationData : token.authorizationData())
             {
-
                 ParsedAuthorizationData parsedAuthData = AuthorizationDataParser.parse(authorizationData);
                 System.out.println(parsedAuthData);
                 String dockerLoginCommand = String.format("docker login --username AWS --password %s %s",
                                                           parsedAuthData.decodedAuthorizationToken,
                                                           parsedAuthData.registry);
                 System.out.println("Docker login command: " + dockerLoginCommand);
-                CommandLineExecutor.execute(dockerLoginCommand, container.getEnvMap());
+                try
+                {
+                    CommandLineExecutor.execute(dockerLoginCommand, container.getEnvMap());
+                    System.out.println("Docker login succeeded against " + authorizationData.proxyEndpoint());
+                }
+                catch (Exception e)
+                {
+                    System.out.println("Docker login failed against " + authorizationData.proxyEndpoint());
+                }
             }
         }
     }
